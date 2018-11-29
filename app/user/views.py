@@ -5,7 +5,7 @@ from . import user
 from ..models import User, Factory, Eqp, Role
 from .forms import LoginForm, RegisterForm, UserEdit
 from .. import db
-from ..decorators import admin_required
+from ..decorators import admin_required, engineer_required
 import logging
 import json
 
@@ -54,7 +54,7 @@ def register():
 
 @user.route('/manage', methods=['GET', 'POST'])
 @login_required
-@admin_required
+@engineer_required
 def manage():
     UserList = User.objects(factory=current_user.factory, role__gt=current_user.role).order_by("+role__RID")
     return render_template('/user/manage.html', UserList=UserList)
@@ -62,10 +62,10 @@ def manage():
 
 @user.route('/editUser/<string:username>', methods=['GET', 'POST'])
 @login_required
-@admin_required
+@engineer_required
 def editUser(username):
     user = User.objects(UID=username).get()
-    form = UserEdit()
+    form = UserEdit(current_user)
     if form.validate_on_submit():
         user.UID = form.username.data
         user.role = Role.objects(RID=form.role.data).get()

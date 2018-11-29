@@ -30,12 +30,13 @@
 			        <li class="dropdown">
 			          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">工程师界面 <span class="caret"></span></a>
 			          <ul class="dropdown-menu">
-			            <li><a href="{{ url_for('engineer.setpoint') }}">初值设定</a></li>
+			            <li><a href="{{ url_for('engineer.create_eqp') }}">初值设定</a></li>
 			            <li><a href="{{ url_for('engineer.faultreport') }}">故障报告</a></li>
 			            <li><a href="{{ url_for('engineer.operaterecord') }}">操作记录</a></li>
 			            <li><a href="{{ url_for('engineer.history') }}">历史趋势</a></li>
 			          </ul>
-			        </li>
+					</li>
+					<li><a href="{{ url_for('user.manage') }}">人员管理</a></li>
 		        {% elif current_user.is_authenticated and current_user.role.RID == 0 %}
 		        	<li><a href="{{ url_for('report.details') }}">运行报告</a></li>
 		        	<li><a href="{{ url_for('report.devReports') }}">检验报告</a></li>

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from gevent import monkey
+monkey.patch_all()
 from mongoengine.queryset import QuerySet
 from mongoengine.errors import DoesNotExist, MultipleObjectsReturned
 
@@ -56,8 +58,7 @@ class mongo_service(object):
             num = len(obj)
             for item in obj:
                 item.switch_collection(self.qs_name)
-                obj.update(**u_dic)
-                obj.reload()
+                item.update(**u_dic)
             return num
         except Exception as e:
             print(e)

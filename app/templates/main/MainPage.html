@@ -60,6 +60,7 @@
 					<td><strong>设备位置</strong></td>
 					<td><strong>设备状态</strong></td>
 					<td><strong>供应商</strong></td>
+					<td><strong>编辑设备</strong></td>
 				</thead>
 				{% for eqp in eqpList %}
 				<tr>
@@ -67,6 +68,24 @@
 					<td>{{ eqp.place }}</td>
 					<td>{{ eqp.state }}</td>
 					<td>{{ eqp.supplier['SID'] }}, {{ eqp.supplier['contact'] }}</td>
+					<td>
+							<div class="btn-group" role="group" aria-label="...">
+								<div class="btn-group" role="group">
+									<button type="button" class="btn {% if eqp.state == 0 %} btn-success
+																							 {% elif eqp.state == 1 %} btn-warning 
+																							 {% elif eqp.state == 2%} btn-danger
+																							 {% else %} btn-info {% endif %}" id="view">查看</button>
+								</div>
+								<div class="btn-group" role="group" id="edit">
+									<button type="button" class="btn btn-info">编辑</button>
+								</div>
+								{% if current_user.role.RID == 0 %}
+								<div class="btn-group" role="group">
+									<button type="button" class="btn btn-danger" id="delete">删除</button>
+								</div>
+								{% endif %}
+							</div>
+					</td>
 				</tr>
 				{% endfor %}
 			</table>
@@ -76,9 +95,9 @@
 
 {% block scripts %}
 {{ super() }}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'mainPage.css')}}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'main/MainPage.css')}}">
 
-<script type=text/javascript src="{{ url_for('static', filename='mainPage.js') }}"></script> 
+<script type=text/javascript src="{{ url_for('static', filename='main/MainPage.js') }}"></script> 
 {% endblock %}
 
 

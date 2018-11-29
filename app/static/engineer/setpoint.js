@@ -1,52 +1,3 @@
-// function sendData(){
-// 	var Num = $('#Num').val();
-//     var ExcV = $('#ExcV').val();
-//     var Sensitivity = $('#Sensitivity').val();
-//     var Resistance = $('#Resistance').val();
-//     var Temp = $('#Temp').val();
-//     var Wet = $('#Wet').val();
-//     var Name = $('#Name').val();
-//     var noLoad = $('#noLoad').val();
-//     var emptyLoad = $('#emptyLoad').val();
-//     var eqpName = $('#eqpName').val();
-//     var supplier = $('#productInfo').val();
-//     var str_param_len1 = noLoad.split(',').length;
-//     var str_param_len2 = emptyLoad.split(',').length;
-//     var str_param_len3 = Name.split(',').length;
-//     var data = {"Num": Num, "ExcV": ExcV, "Sensitivity": Sensitivity, "Resistance": Resistance, "noLoad": noLoad, "Temp": Temp, "Wet": Wet, "Name": Name, "emptyLoad": emptyLoad, "eqpname": eqpName, "supplier": supplier};
-//     if (str_param_len1 != Number(Num)) {
-//     	alert('请确认无负载读数数量是否与传感器个数相符');
-//     	$('#submit').removeAttr("disabled");
-//     }
-//     if (str_param_len2 != Number(Num)) {
-//     	alert('请确认空载读数数量是否与传感器个数相符');
-//     	$('#submit').removeAttr("disabled");
-//     }
-//     if (str_param_len2 != Number(Num)) {
-//     	alert('请确认传感器位号数量是否与传感器个数相符');
-//     	$('#submit').removeAttr("disabled");
-//     }
-//     if (str_param_len1 == Number(Num) && str_param_len2 == Number(Num) && str_param_len3 == Number(Num)) {
-//     	$.ajax({
-//             type:"POST",
-//             url: "/scale/engineer/insertSetpoint",
-//             DataType:"json",
-//             data:data,
-//             success:function(data){
-//             	if (data.success) {
-//             		alert('上传参数成功！');
-//             		$('#submit').removeAttr("disabled");
-//             	}
-//             	else{
-//             		alert('上传参数失败！');
-//             		$('#submit').removeAttr("disabled");
-//             	}
-//             }
-//         });
-//     }
-// }
-
-// var label = 1;
 $(document).ready(function(){
 	$('div.form-group.required').each(function(){
 		$(this).addClass('col-md-6 col-sm-6');
@@ -55,24 +6,43 @@ $(document).ready(function(){
 		});
 	})
 	$('#submit').addClass('col-md-offset-3 col-sm-offset-3 col-md-4 col-sm-4');
+	$('table input').width('100%');
 
-	// $('#submit').on('click', function(e){
-	// 	$('#submit').attr("disabled", "disabled");
-	// 	$('input').each(function(){
-	// 		if (!($(this).val())) {
-	// 			label = 0;
-	// 		}
-	// 	})
-	// 	// e.prevenrDefault();
-	// 	if (label) {
-	// 		sendData();
-	// 	}
-	// 	else{
-	// 		alert('请按要求填写参数，若无此参数请填写无！');
-	// 		$('#submit').removeAttr("disabled");
-	// 		label = 1;
-	// 	}
-		
-	// })
+	var sencer_num = 1;
+
+	$('#num').on('change',function(){
+		sencer_num = parseInt($('#num').val())
+	})
+
+	$("div[data-toggle=fieldset]").each(function() {
+        var $this = $(this);
+            
+            //Add new entry
+        $this.find("button[data-toggle=fieldset-add-row]").click(function() {
+            var target = $($(this).data("target"))
+            var oldrow = target.find("tr[data-toggle=fieldset-entry]:last");
+            var row = oldrow.clone(true, true);
+			var elem_id = row.find(":input")[0].id;
+			var elem_num = parseInt(elem_id.replace(/.*-(\d{1,4})-.*/m, '$1')) + 1;
+			if ($('tr').length - 1 >= sencer_num) {
+				alert("传感器数量已到设定值！");
+			} else {
+				row.attr('data-id', elem_num);
+				row.find(":input").each(function() {
+					var id = $(this).attr('id').replace('-' + (elem_num - 1) + '-', '-' + (elem_num) + '-');
+					$(this).attr('name', id).attr('id', id).val('').removeAttr("checked");
+				});
+				oldrow.after(row);
+			}
+        }); //End add new entry
+
+                //Remove row
+        $this.find("button[data-toggle=fieldset-remove-row]").click(function() {
+            if($this.find("tr[data-toggle=fieldset-entry]").length > 1) {
+                var thisRow = $(this).closest("tr[data-toggle=fieldset-entry]");
+                thisRow.remove();
+            }
+        }); //End remove row
+    });
 
 })

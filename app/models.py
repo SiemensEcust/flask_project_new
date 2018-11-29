@@ -33,7 +33,7 @@ class Factory(db.Document):
     meta = {'indexes': ['FID']}
 
 
-# 每个工厂一张，命名：FacID + Sup
+# 每个工厂一张，命名：FID + sup
 class Supplier(db.Document):
     contact = db.StringField(max_length=20)
     SID = db.StringField(max_length=20, unique_with="contact")
@@ -41,11 +41,16 @@ class Supplier(db.Document):
     meta = {'indexes': [('SID', 'contact')]}
 
 
-# 每个工厂一张，命名：FacID + EQP
+class EqpSup(db.EmbeddedDocument):
+    SID = db.StringField(max_length=20)
+    contact = db.StringField(max_length=20)
+
+
+# 每个工厂一张，命名：FID + eqp
 class Eqp(db.Document):
     EID = db.StringField(max_length=20, unique=True)
     place = db.StringField(max_length=20)
-    supplier = db.DictField()
+    supplier = db.EmbeddedDocumentField(EqpSup)
     meta = {'indexes': ['EID']}
 
 
@@ -70,3 +75,52 @@ class User(UserMixin, db.Document):
 
     def __repr__(self):
         return '<User %r>' % self.username
+
+
+# 每个设备一张，命名：FID + EID + eqpinfo
+
+class SencerInfo(db.EmbeddedDocument):
+    sencer_name = db.StringField(max_length=20)
+    no_load_set = db.FloatField()
+    empty_load_set = db.FloatField()
+    exec_v = db.FloatField()
+    sensitivity = db.FloatField()
+    resistance = db.FloatField()
+
+
+class EqpInfo(db.Document):
+    timestamp = db.DateTimeField(default=datetime.datetime.utcnow, required=True)
+    sencer_num = db.IntField()
+    sencer_info = db.ListField(db.EmbeddedDocumentField(SencerInfo))
+    temperature = db.FloatField()
+    wet = db.FloatField()
+    meta = {'indexes': ['timestamp']}
+
+
+# 每个设备一张，命名：FID + EID + thread
+class SencerThreadInfo(db.EmbeddedDocument):
+    standard_point = db.FloatField()
+    zero_point = db.FloatField()
+
+class Thread(db.Document):
+    timestamp = db.DateTimeField(default=datetime.datetime.utcnow, required=True)
+    sencer_thread_info = db.ListField(db.EmbeddedDocumentField(SencerThreadInfo))
+    meta = {'indexes': ['timestamp']}
+
+
+# 每个设备一张，命名：FID + EID + faultlist.
+class FaultList(db.Document):
+    fault_time = db.DateTimeField(default=datetime.datetime.utcnow, required=True)
+    recover_time = db.DateTimeField()
+    period_second = db.IntField()
+    fault_sencer = db.StringField(max_length=20)
+    fault_code = db.IntField()
+    fault_state = db.BooleanField()
+    meta = {'indexes': ['fault_time', 'fault_sencer', 'fault_code']}
+
+
+# 每个设备一张，命名：FID + EID + operation
+class Operation(db.Document):
+    timestamp = db.DateTimeField(default=datetime.datetime.utcnow, required=True)
+    record = db.StringField(max_length=250)
+    meta = {'indexes': ['timestamp']}

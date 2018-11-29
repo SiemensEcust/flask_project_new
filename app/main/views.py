@@ -40,7 +40,7 @@ def index():
             if eqpName:
                 try:
                     for item in eqpName:
-                        eqpList.append(Eqp_new.find_object(EID=item))
+                        eqpList.append(Eqp_new.find_object(EID=item)[0])
                 except Exception as e:
                     flash(e)
                     return render_template('500.html')
@@ -56,8 +56,8 @@ def index():
     return render_template('/main/MainPage.html')
 
 
-@main.route('/Running/<string:EqpName>', methods=['POST', 'GET'])
+@main.route('/Running/<string:eqp_name>', methods=['POST', 'GET'])
 @login_required
-def Running(EqpName):
+def Running(eqp_name):
     return render_template('/main/RunningUI.html')
 
